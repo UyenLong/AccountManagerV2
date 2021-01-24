@@ -3,7 +3,7 @@
 
 #include <string>
 #include <map>
-#include "Account.h"
+#include "../DataType/User.h"
 
 using namespace std;
 
@@ -13,7 +13,8 @@ protected:
     map<string, string> _rowData;
 
 public:
-    void setRowData(map<string, string>);
+    void setRowData(string, string, string, string);
+    void setRowData(User);
     map<string, string> getRowData();
 };
 

@@ -1,0 +1,13 @@
+#define SERVER_DANANG '1'
+#define SERVER_HANOI '2'
+#define DATABASE_SERVER_DN "..\\DataBase\\Database1.txt"
+#define DATABASE_SERVER_HN "..\\DataBase\\Database2.txt"
+#define SIGN_UP '1'
+#define SIGN_IN '2'
+#define VIEW_LIST_OF_ALL_ACCOUNTS '1'
+#define VIEW_LIST_OF_INACTIVE_ACCOUNTS '2'
+#define DELETE_ACCOUNTS_IN_LIST_OF_ALL_ACCOUNTS '3'
+#define DELETE_ACCOUNTS_IN_LIST_OF_INACTIVE_ACCOUNTS '4'
+#define CHANGE_PASSWORD '1'
+#define DELETE_CURRENT_ACCOUNT '2'
+#define PASSWORD_RULES "(?=.*?[A-Z])(?=.*?[a-z])((?=.*?[0-9])|).{8,}"

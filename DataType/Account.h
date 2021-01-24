@@ -1,21 +1,27 @@
 #ifndef ACCOUNT_H
 #define ACCOUNT_H
 
-#include "RowData.h"
+#include "../DataHolder/RowData.h"
+#include <string>
+
+using namespace std;
 
 class Account
 {
 protected:
-    RowData _rowData;
     string _username;
     string _password;
     string _status;
     string _role;
 
 public:
+    void setAccountInfo();
+    void setAccountInfo(Account);
     void setAccountInfo(RowData);
-    void setAccountInfo(string, string);
     void setAccountInfo(map<string, string>);
+    void updateStatus(string);
+    void updatePassword(string);
+    map<string, string> getAccountInfo();
 };
 
 #endif

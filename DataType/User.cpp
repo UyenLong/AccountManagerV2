@@ -3,9 +3,4 @@
 
 #include "User.h"
 
-map<string, string> User::getAccountInfo()
-{
-    
-}
-
 #endif

@@ -13,12 +13,14 @@ private:
     vector<User> _inactiveAccounts;
 
 public:
+    Admin();
     void setListOfAccounts(TableData);
     void setListOfInactiveAccounts();
     vector<User> getListOfAccounts();
     vector<User> getListOfInactiveAccounts();
     void deleteAnAccount(string);
-    void addNewAccount(Account);
+    void addNewAccount(User);
+    void updateAccountInfo(User);
 };
 
 #endif

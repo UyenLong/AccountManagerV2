@@ -11,6 +11,7 @@ private:
     vector<RowData> _tableData;
 
 public:
+    TableData();
     TableData(vector<RowData>);
     void setTableData(vector<User>);
     vector<RowData> getTableData();

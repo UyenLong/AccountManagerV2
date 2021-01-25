@@ -12,6 +12,8 @@ void Account::setAccountInfo()
     cin >> _username;
     cout << "Enter password: " << endl;
     cin >> _password;
+    _role = "user";
+    _status = "active";
 }
 
 void Account::setAccountInfo(Account account)
@@ -54,6 +56,7 @@ map<string, string> Account::getAccountInfo()
     accountInfo["Password"] = _password;
     accountInfo["Status"] = _status;
     accountInfo["Role"] = _role;
+    return accountInfo;
 }
 
 #endif

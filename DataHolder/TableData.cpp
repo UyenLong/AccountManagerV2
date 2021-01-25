@@ -3,6 +3,11 @@
 
 #include "TableData.h"
 
+TableData::TableData()
+{
+    _tableData.resize(0);
+}
+
 TableData::TableData(vector<RowData> tableData)
 {
     _tableData.resize(0);
@@ -20,7 +25,7 @@ void TableData::setTableData(vector<User> data)
     for (User user:data)
     {
         RowData rowData;
-        rowData.setRowData(user);
+        rowData.setRowData(user.getAccountInfo());
         _tableData.push_back(rowData);
     }
 }

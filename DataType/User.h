@@ -5,6 +5,8 @@
 
 class User : public Account
 {
+    public:
+    User();
 };
 
 #endif

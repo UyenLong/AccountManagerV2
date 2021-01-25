@@ -17,9 +17,8 @@ map<string, string> RowData::getRowData()
     return _rowData;
 }
 
-void RowData::setRowData(User user)
+void RowData::setRowData(map<string, string> userInfo)
 {
-    map<string, string> userInfo = user.getAccountInfo();
     _rowData.clear();
     _rowData["ID"] = userInfo["ID"];
     _rowData["Password"] = userInfo["Password"];

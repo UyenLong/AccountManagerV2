@@ -3,7 +3,6 @@
 
 #include <string>
 #include <map>
-#include "../DataType/User.h"
 
 using namespace std;
 
@@ -14,7 +13,7 @@ protected:
 
 public:
     void setRowData(string, string, string, string);
-    void setRowData(User);
+    void setRowData(map<string, string>);
     map<string, string> getRowData();
 };
 

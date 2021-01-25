@@ -4,7 +4,6 @@
 #include "../DataType/User.h"
 #include "../DataType/Admin.h"
 #include "../DataHolder/TableData.h"
-#include "../UI/Menu.h"
 #include "../FileHandler/FileHandler.h"
 
 class Controller
@@ -16,6 +15,7 @@ private:
     User _user;
 
 public:
+    Controller();
     bool login();
     void createNewAccount();
     void changePassword();
@@ -34,6 +34,7 @@ public:
     void updateAdminData(User);
     void deleteAccountInAdminData(string);
     void updateToDatabase();
+    bool isExistAccount(string);
 };
 
 #endif

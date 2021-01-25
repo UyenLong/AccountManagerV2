@@ -3,4 +3,12 @@
 
 #include "User.h"
 
+User::User()
+{
+    _username = " ";
+    _password = " ";
+    _role = " ";
+    _status = " ";
+}
+
 #endif

@@ -24,6 +24,7 @@ public:
     char setMenuSelectionBeforeLogin();
     char setMenuSelectionAfterLoginAsAdminRole();
     char setMenuSelectionAfterLoginAsUserRole();
+    //void setServer();
 };
 
 #endif

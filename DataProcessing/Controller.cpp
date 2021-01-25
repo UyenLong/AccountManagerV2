@@ -3,15 +3,27 @@
 
 #include "Controller.h"
 #include <regex>
-#include "../Constants/Constants.h"
 #include <iostream>
 #include <string>
+#define PASSWORD_RULES "(?=.*?[A-Z])(?=.*?[a-z])((?=.*?[0-9])|).{8,}"
 
 using namespace std;
 
 bool isPasswordInCorrectForm(string password)
 {
     return regex_match(password, regex(PASSWORD_RULES));
+}
+
+Controller::Controller()
+{
+    FileHandler fileHandler{};
+    _fileHandler = fileHandler;
+    TableData tableData{};
+    _tableData = tableData;
+    Admin admin{};
+    _admin = admin;
+    User user{};
+    _user = user;
 }
 
 bool Controller::isValidAccount(Account &account)
@@ -22,14 +34,16 @@ bool Controller::isValidAccount(Account &account)
     for (RowData rowData : tableData)
     {
         map<string, string> dataOfRow = rowData.getRowData();
-        if (dataOfRow["ID"] == accountInfo["ID"])
+        if (dataOfRow["ID"] == accountInfo["ID"] && dataOfRow["Password"] == accountInfo["Password"])
         {
             accountInfo["Role"] = dataOfRow["Role"];
             accountInfo["Status"] = dataOfRow["Role"];
+            account.setAccountInfo(accountInfo);
             isValid = true;
             break;
         }
     }
+    return isValid;
 }
 
 bool Controller::login()
@@ -50,20 +64,26 @@ bool Controller::login()
 void Controller::setCurrentAccountInfo(Account account)
 {
     map<string, string> accountInfo = account.getAccountInfo();
-    if (accountInfo["Role"] == "admin")
-    {
-        _admin.setAccountInfo(account);
-    }
-    else
-        _user.setAccountInfo(account);
+    _user.setAccountInfo(account);
 }
 
 void Controller::createNewAccount()
 {
     User account;
     account.setAccountInfo();
-    _admin.addNewAccount(account);
-    updateData(account);
+    map<string, string> accountInfo = account.getAccountInfo();
+    if (isPasswordInCorrectForm(accountInfo["Password"]) && !isExistAccount(accountInfo["ID"]))
+    {
+        _admin.addNewAccount(account);
+        _tableData.setTableData(_admin.getListOfAccounts());
+        cout << "------------------------------------" << endl;
+        cout << "Create account successfully!" << endl;
+    }
+    else
+    {
+        cout << "------------------------------------" << endl;
+        cout << "Please try again!" << endl;
+    }
 }
 
 void Controller::changePassword()
@@ -94,9 +114,6 @@ void Controller::reviewListOfInactiveAccounts()
             stopKey = '1';
             break;
         default:
-            cout << "Please enter ID you want to delete: " << endl;
-            string username;
-            cin >> username;
             deleteAccountByUsername();
             break;
         }
@@ -106,7 +123,8 @@ void Controller::reviewListOfInactiveAccounts()
 void Controller::deleteCurrentAccount()
 {
     _user.updateStatus("inactive");
-    updateData(_user);
+    updateAdminData(_user);
+    _tableData.setTableData(_admin.getListOfAccounts());
 }
 
 void Controller::deleteAccountByUsername()
@@ -152,17 +170,13 @@ void Controller::setupData(string fileName)
 {
     _fileHandler.setDataForFileHandler(fileName);
     _tableData = _fileHandler.getDataFromDatabase();
-}
-
-void Controller::updateData(User user)
-{
-    updateAdminData(user);
-    _tableData.setTableData(_admin.getListOfAccounts());
+    _admin.setListOfAccounts(_tableData);
+    _admin.setListOfInactiveAccounts();
 }
 
 void Controller::updateAdminData(User user)
 {
-    _admin.setAccountInfo(user.getAccountInfo());
+    _admin.updateAccountInfo(user);
 }
 
 void Controller::deleteAccountInAdminData(string username)
@@ -174,6 +188,22 @@ void Controller::deleteAccountInAdminData(string username)
 void Controller::updateToDatabase()
 {
     _fileHandler.updateDataToDatabase(_tableData);
+}
+
+bool Controller::isExistAccount(string username)
+{
+    bool isExist = false;
+    vector<User> listOfAccounts = _admin.getListOfAccounts();
+    for (User user : listOfAccounts)
+    {
+        map<string, string> userInfo = user.getAccountInfo();
+        if (userInfo["ID"] == username)
+        {
+            isExist = true;
+            break;
+        }
+    }
+    return isExist;
 }
 
 #endif

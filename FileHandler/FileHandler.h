@@ -12,6 +12,7 @@ private:
     string _filePath;
 
 public:
+    FileHandler();
     void setDataForFileHandler(string);
     TableData getDataFromDatabase();
     void updateDataToDatabase(TableData);

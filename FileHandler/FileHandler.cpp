@@ -4,6 +4,11 @@
 #include "FileHandler.h"
 #include <fstream>
 
+FileHandler::FileHandler()
+{
+    _filePath = " ";
+}
+
 void FileHandler::setDataForFileHandler(string filePath)
 {
     _filePath = filePath;
@@ -31,10 +36,11 @@ void FileHandler::updateDataToDatabase(TableData tableData)
 {
     vector<RowData> dataFromTableData = tableData.getTableData();
     ofstream file{_filePath};
+    file.clear();
     for (RowData rowData:dataFromTableData)
     {
         map<string, string> dataOfRow = rowData.getRowData();
-        file << dataOfRow["ID"] << dataOfRow["Password"] << dataOfRow["Role"] << dataOfRow["Status"];
+        file << dataOfRow["ID"] << " " << dataOfRow["Password"] << " " << dataOfRow["Role"] << " " << dataOfRow["Status"] << "\n";
     }
     file.close();
 }

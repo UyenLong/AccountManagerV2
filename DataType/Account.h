@@ -16,8 +16,8 @@ protected:
 
 public:
     void setAccountInfo();
-    void setAccountInfo(Account);
-    void setAccountInfo(RowData);
+    void setAccountInfo(Account *);
+    void setAccountInfo(RowData *);
     void setAccountInfo(map<string, string>);
     void updateStatus(string);
     void updatePassword(string);

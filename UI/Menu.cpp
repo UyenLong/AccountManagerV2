@@ -20,63 +20,62 @@ using namespace std;
 
 Menu::Menu()
 {
-    Controller controller{};
-    _controller = controller;
+    _controller = new Controller();
 }
 
 bool Menu::login()
 {
     cout << "---------------------------" <<endl;
-    return _controller.login();
+    return _controller->login();
     cout << "---------------------------" <<endl;
 }
 
 void Menu::createNewAccount()
 {
     cout << "---------------------------" <<endl;
-    _controller.createNewAccount();
+    _controller->createNewAccount();
     cout << "---------------------------" <<endl;
 }
 
 void Menu::changePassword()
 {
     cout << "---------------------------" <<endl;
-    _controller.changePassword();
+    _controller->changePassword();
     cout << "---------------------------" <<endl;
 }
 
 void Menu::deleteCurrentAccount()
 {
     cout << "---------------------------" <<endl;
-    _controller.deleteCurrentAccount();
+    _controller->deleteCurrentAccount();
     cout << "---------------------------" <<endl;
 }
 
 void Menu::deleteAccountsByAdminRole()
 {
     cout << "---------------------------" <<endl;
-    _controller.deleteAccountByUsername();
+    _controller->deleteAccountByUsername();
     cout << "---------------------------" <<endl;
 }
 
 void Menu::reviewListOfInactiveAccounts()
 {
     cout << "---------------------------" <<endl;
-    _controller.reviewListOfInactiveAccounts();
+    _controller->reviewListOfInactiveAccounts();
     cout << "---------------------------" <<endl;
 }
 
 void Menu::viewListOfAccounts()
 {
     cout << "---------------------------" <<endl;
-    _controller.printListOfAllAccounts();
+    _controller->printListOfAllAccounts();
     cout << "---------------------------" <<endl;
 }
 
 void Menu::viewListOfInactiveAccounts()
 {
     cout << "---------------------------" <<endl;
-    _controller.printListOfInactiveAccounts();
+    _controller->printListOfInactiveAccounts();
     cout << "---------------------------" <<endl;
 }
 
@@ -84,7 +83,6 @@ void Menu::home()
 {
     bool isExit = false;
     char serverSelection = getMenuSelectionForServer();
-    cout << "Server selection is: " << serverSelection << endl;
     if (serverSelection == SERVER_DANANG || serverSelection == SERVER_HANOI)
     {
         string server = " ";
@@ -92,7 +90,7 @@ void Menu::home()
             server = DATABASE_SERVER_DN;
         else
             server = DATABASE_SERVER_HN;
-        _controller.setupData(server);
+        _controller->setupData(server);
 
         char selectionBeforeLogin;
         do
@@ -137,7 +135,7 @@ void Menu::home()
                 isExit = true;
                 break;
             }
-            _controller.updateToDatabase();
+            _controller->updateToDatabase();
         } while (selectionBeforeLogin == '1' || selectionBeforeLogin == '2' || isExit == false);
     }
 }
@@ -147,7 +145,7 @@ bool Menu::executeAccordingToSelectionMenuAfterLogin()
     bool isLogout = false;
     char selectionAfterLogin;
     char stopCondition = '1';
-    map<string, string> accountInfo = _controller.getCurrentAccountInfo();
+    map<string, string> accountInfo = _controller->getCurrentAccountInfo();
     cout << "Role is: " << accountInfo["Role"] << endl;
     if (accountInfo["Role"] == "admin")
     {
@@ -206,8 +204,9 @@ char Menu::getMenuSelectionForServer()
          << "Enter 2 to select server Ha Noi" << endl
          << "Enter any key isn't listed above to exit" << endl
          << "-----------------------------------------------" << endl
-         << "Your selection is: " << endl;
+         << "Your selection is: ";
     cin >> selection;
+    cout << endl;
     return selection;
 }
 
@@ -220,8 +219,9 @@ char Menu::setMenuSelectionBeforeLogin()
          << "Enter 1 to sign up" << endl
          << "Enter 2 to sign in" << endl
          << "-----------------------------------------------" << endl
-         << "Your selection is: " << endl;
+         << "Your selection is: ";
     cin >> selection;
+    cout << endl;
     return selection;
 }
 
@@ -234,8 +234,9 @@ char Menu::setMenuSelectionAfterLoginAsAdminRole()
          << "Enter 3 to delete accounts in list of all accounts" << endl
          << "Enter 4 to delete accounts in list of inactive accounts" << endl
          << "-----------------------------------------------" << endl
-         << "Your selection is: " << endl;
+         << "Your selection is: ";
     cin >> selection;
+    cout << endl;
     return selection;
 }
 
@@ -246,8 +247,9 @@ char Menu::setMenuSelectionAfterLoginAsUserRole()
          << "Enter 1 to change password" << endl
          << "Enter 2 to delete current account" << endl
          << "-----------------------------------------------" << endl
-         << "Your selection is: " << endl;
+         << "Your selection is: ";
     cin >> selection;
+    cout << endl;
     return selection;
 }
 

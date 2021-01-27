@@ -16,18 +16,18 @@ void Account::setAccountInfo()
     _status = "active";
 }
 
-void Account::setAccountInfo(Account account)
+void Account::setAccountInfo(Account *account)
 {
-    map<string, string> accountInfo = account.getAccountInfo();
+    map<string, string> accountInfo = account->getAccountInfo();
     _username = accountInfo["ID"];
     _password = accountInfo["Password"];
     _status = accountInfo["Status"];
     _role = accountInfo["Role"];
 }
 
-void Account::setAccountInfo(RowData rowData)
+void Account::setAccountInfo(RowData *rowData)
 {
-    map<string, string> data = rowData.getRowData();
+    map<string, string> data = rowData->getRowData();
     setAccountInfo(data);
 }
 

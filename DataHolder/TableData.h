@@ -8,13 +8,14 @@
 class TableData
 {
 private:
-    vector<RowData> _tableData;
+    vector<RowData *> _tableData;
 
 public:
     TableData();
-    TableData(vector<RowData>);
-    void setTableData(vector<User>);
-    vector<RowData> getTableData();
+    ~TableData();
+    TableData(vector<RowData *>);
+    void setTableData(vector<User *>);
+    vector<RowData *> getTableData();
 };
 
 #endif

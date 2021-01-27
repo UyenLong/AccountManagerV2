@@ -2,6 +2,7 @@
 #define ADMIN_CPP
 
 #include "Admin.h"
+#include "../Utility/Utility.h"
 
 Admin::Admin()
 {
@@ -9,25 +10,33 @@ Admin::Admin()
     _inactiveAccounts.resize(0);
 }
 
-void Admin::setListOfAccounts(TableData tableData)
+Admin::~Admin()
+{
+    Utility::deleteVectorPtrs(_allAccounts);
+    Utility::deleteVectorPtrs(_inactiveAccounts);
+}
+
+void Admin::setListOfAccounts(TableData *tableData)
 {
     _allAccounts.clear();
-    vector<RowData> data = tableData.getTableData();
-    for (RowData rowData : data)
+    vector<RowData *> data = tableData->getTableData();
+    for (RowData *rowData : data)
     {
-        User user;
-        user.setAccountInfo(rowData);
-        map<string, string> userData = user.getAccountInfo();
+        User *user;
+        user->setAccountInfo(rowData);
+        map<string, string> userData = user->getAccountInfo();
         _allAccounts.push_back(user);
+        delete(user);
     }
+    Utility::deleteVectorPtrs(data);
 }
 
 void Admin::setListOfInactiveAccounts()
 {
     _inactiveAccounts.clear();
-    for (User user : _allAccounts)
+    for (User *user : _allAccounts)
     {
-        map<string, string> userData = user.getAccountInfo();
+        map<string, string> userData = user->getAccountInfo();
         if (userData["Status"] == "inactive")
         {
             _inactiveAccounts.push_back(user);
@@ -35,12 +44,12 @@ void Admin::setListOfInactiveAccounts()
     }
 }
 
-vector<User> Admin::getListOfAccounts()
+vector<User *> Admin::getListOfAccounts()
 {
     return _allAccounts;
 }
 
-vector<User> Admin::getListOfInactiveAccounts()
+vector<User *> Admin::getListOfInactiveAccounts()
 {
     return _inactiveAccounts;
 }
@@ -48,9 +57,9 @@ vector<User> Admin::getListOfInactiveAccounts()
 void Admin::deleteAnAccount(string username)
 {
     int index = 0;
-    for (User user : _allAccounts)
+    for (User *user : _allAccounts)
     {
-        map<string, string> userData = user.getAccountInfo();
+        map<string, string> userData = user->getAccountInfo();
         if (userData["ID"] == username)
         {
             _allAccounts.erase(_allAccounts.begin() + index);
@@ -64,14 +73,14 @@ void Admin::deleteAnAccount(string username)
     }
 }
 
-void Admin::addNewAccount(User user)
+void Admin::addNewAccount(User *user)
 {
     _allAccounts.push_back(user);
 }
 
-void Admin::updateAccountInfo(User user)
+void Admin::updateAccountInfo(User *user)
 {
-    map<string, string> userInfo = user.getAccountInfo();
+    map<string, string> userInfo = user->getAccountInfo();
     deleteAnAccount(userInfo["ID"]);
     addNewAccount(user);
     setListOfInactiveAccounts();

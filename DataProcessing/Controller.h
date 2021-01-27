@@ -9,13 +9,14 @@
 class Controller
 {
 private:
-    FileHandler _fileHandler;
-    TableData _tableData;
-    Admin _admin;
-    User _user;
+    FileHandler *_fileHandler;
+    TableData *_tableData;
+    Admin *_admin;
+    User *_user;
 
 public:
     Controller();
+    ~Controller();
     bool login();
     void createNewAccount();
     void changePassword();
@@ -23,15 +24,15 @@ public:
     void deleteAccountByUsername();
     void reviewListOfInactiveAccounts(); 
     map<string,string> getCurrentAccountInfo();
-    void printAccountInfo(User);
-    void printListOfAccounts(vector<User>);
+    void printAccountInfo(User *);
+    void printListOfAccounts(const vector<User *> &);
     void printListOfAllAccounts();
     void printListOfInactiveAccounts();
     void setupData(string);
-    void setCurrentAccountInfo(Account);
-    bool isValidAccount(Account &);
-    void updateData(User);
-    void updateAdminData(User);
+    void setCurrentAccountInfo(Account *);
+    bool isValidAccount(Account *);
+    void updateData(User *);
+    void updateAdminData(User *);
     void deleteAccountInAdminData(string);
     void updateToDatabase();
     bool isExistAccount(string);

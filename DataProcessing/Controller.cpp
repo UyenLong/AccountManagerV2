@@ -5,7 +5,7 @@
 #include <regex>
 #include <iostream>
 #include <string>
-#define PASSWORD_RULES "(?=.*?[A-Z])(?=.*?[a-z])((?=.*?[0-9])|).{8,}"
+#include "../Utility/Utility.h"
 
 using namespace std;
 
@@ -16,40 +16,45 @@ bool isPasswordInCorrectForm(string password)
 
 Controller::Controller()
 {
-    FileHandler fileHandler{};
-    _fileHandler = fileHandler;
-    TableData tableData{};
-    _tableData = tableData;
-    Admin admin{};
-    _admin = admin;
-    User user{};
-    _user = user;
+    _fileHandler = new FileHandler();
+    _tableData = new TableData();
+    _admin = new Admin();
+    _user = new User();
 }
 
-bool Controller::isValidAccount(Account &account)
+Controller::~Controller()
+{
+    delete(_fileHandler);
+    delete(_tableData);
+    delete(_admin);
+    delete(_user);
+}
+
+bool Controller::isValidAccount(Account *account)
 {
     bool isValid = false;
-    vector<RowData> tableData = _tableData.getTableData();
-    map<string, string> accountInfo = account.getAccountInfo();
-    for (RowData rowData : tableData)
+    vector<RowData *> tableData = _tableData->getTableData();
+    map<string, string> accountInfo = account->getAccountInfo();
+    for (RowData *rowData : tableData)
     {
-        map<string, string> dataOfRow = rowData.getRowData();
+        map<string, string> dataOfRow = rowData->getRowData();
         if (dataOfRow["ID"] == accountInfo["ID"] && dataOfRow["Password"] == accountInfo["Password"])
         {
             accountInfo["Role"] = dataOfRow["Role"];
             accountInfo["Status"] = dataOfRow["Role"];
-            account.setAccountInfo(accountInfo);
+            account->setAccountInfo(accountInfo);
             isValid = true;
             break;
         }
     }
+    Utility::deleteVectorPtrs(tableData);
     return isValid;
 }
 
 bool Controller::login()
 {
-    Account account;
-    account.setAccountInfo();
+    Account *account;
+    account->setAccountInfo();
     bool isAccountValid = isValidAccount(account);
     if (isAccountValid)
     {
@@ -58,24 +63,25 @@ bool Controller::login()
     }
     else
         cout << "Login fail!" << endl;
+    delete(account);
     return isAccountValid;
 }
 
-void Controller::setCurrentAccountInfo(Account account)
+void Controller::setCurrentAccountInfo(Account *account)
 {
-    map<string, string> accountInfo = account.getAccountInfo();
-    _user.setAccountInfo(account);
+    map<string, string> accountInfo = account->getAccountInfo();
+    _user->setAccountInfo(account);
 }
 
 void Controller::createNewAccount()
 {
-    User account;
-    account.setAccountInfo();
-    map<string, string> accountInfo = account.getAccountInfo();
+    User *user;
+    user->setAccountInfo();
+    map<string, string> accountInfo = user->getAccountInfo();
     if (isPasswordInCorrectForm(accountInfo["Password"]) && !isExistAccount(accountInfo["ID"]))
     {
-        _admin.addNewAccount(account);
-        _tableData.setTableData(_admin.getListOfAccounts());
+        _admin->addNewAccount(user);
+        _tableData->setTableData(_admin->getListOfAccounts());
         cout << "------------------------------------" << endl;
         cout << "Create account successfully!" << endl;
     }
@@ -84,6 +90,7 @@ void Controller::createNewAccount()
         cout << "------------------------------------" << endl;
         cout << "Please try again!" << endl;
     }
+    delete(user);
 }
 
 void Controller::changePassword()
@@ -91,14 +98,14 @@ void Controller::changePassword()
     string newPassword;
     cout << "Please enter new password: " << endl;
     cin >> newPassword;
-    _user.updatePassword(newPassword);
+    _user->updatePassword(newPassword);
     updateAdminData(_user);
-    _tableData.setTableData(_admin.getListOfAccounts());
+    _tableData->setTableData(_admin->getListOfAccounts());
 }
 
 void Controller::reviewListOfInactiveAccounts()
 {
-    vector<User> list = _admin.getListOfInactiveAccounts();
+    vector<User *> list = _admin->getListOfInactiveAccounts();
     printListOfAccounts(list);
     char stopKey = '1';
     char selection;
@@ -118,13 +125,14 @@ void Controller::reviewListOfInactiveAccounts()
             break;
         }
     } while (stopKey != '1');
+    Utility::deleteVectorPtrs(list);
 }
 
 void Controller::deleteCurrentAccount()
 {
-    _user.updateStatus("inactive");
+    _user->updateStatus("inactive");
     updateAdminData(_user);
-    _tableData.setTableData(_admin.getListOfAccounts());
+    _tableData->setTableData(_admin->getListOfAccounts());
 }
 
 void Controller::deleteAccountByUsername()
@@ -133,24 +141,24 @@ void Controller::deleteAccountByUsername()
     string username;
     cin >> username;
     deleteAccountInAdminData(username);
-    _tableData.setTableData(_admin.getListOfAccounts());
+    _tableData->setTableData(_admin->getListOfAccounts());
 }
 
 map<string, string> Controller::getCurrentAccountInfo()
 {
-    return _user.getAccountInfo();
+    return _user->getAccountInfo();
 }
 
-void Controller::printAccountInfo(User user)
+void Controller::printAccountInfo(User *user)
 {
-    map<string, string> accountInfo = user.getAccountInfo();
+    map<string, string> accountInfo = user->getAccountInfo();
     cout << accountInfo["ID"] << " " << accountInfo["Password"] << " "
          << accountInfo["Role"] << " " << accountInfo["Status"] << endl;
 }
 
-void Controller::printListOfAccounts(vector<User> list)
+void Controller::printListOfAccounts(const vector<User *> &list)
 {
-    for (User user : list)
+    for (User *user : list)
     {
         printAccountInfo(user);
     }
@@ -158,51 +166,52 @@ void Controller::printListOfAccounts(vector<User> list)
 
 void Controller::printListOfAllAccounts()
 {
-    printListOfAccounts(_admin.getListOfAccounts());
+    printListOfAccounts(_admin->getListOfAccounts());
 }
 
 void Controller::printListOfInactiveAccounts()
 {
-    printListOfAccounts(_admin.getListOfInactiveAccounts());
+    printListOfAccounts(_admin->getListOfInactiveAccounts());
 }
 
 void Controller::setupData(string fileName)
 {
-    _fileHandler.setDataForFileHandler(fileName);
-    _tableData = _fileHandler.getDataFromDatabase();
-    _admin.setListOfAccounts(_tableData);
-    _admin.setListOfInactiveAccounts();
+    _fileHandler->setDataForFileHandler(fileName);
+    _tableData = _fileHandler->getDataFromDatabase();
+    _admin->setListOfAccounts(_tableData);
+    _admin->setListOfInactiveAccounts();
 }
 
-void Controller::updateAdminData(User user)
+void Controller::updateAdminData(User *user)
 {
-    _admin.updateAccountInfo(user);
+    _admin->updateAccountInfo(user);
 }
 
 void Controller::deleteAccountInAdminData(string username)
 {
-    _admin.deleteAnAccount(username);
-    _admin.setListOfInactiveAccounts();
+    _admin->deleteAnAccount(username);
+    _admin->setListOfInactiveAccounts();
 }
 
 void Controller::updateToDatabase()
 {
-    _fileHandler.updateDataToDatabase(_tableData);
+    _fileHandler->updateDataToDatabase(_tableData);
 }
 
 bool Controller::isExistAccount(string username)
 {
     bool isExist = false;
-    vector<User> listOfAccounts = _admin.getListOfAccounts();
-    for (User user : listOfAccounts)
+    vector<User *> listOfAccounts = _admin->getListOfAccounts();
+    for (User *user : listOfAccounts)
     {
-        map<string, string> userInfo = user.getAccountInfo();
+        map<string, string> userInfo = user->getAccountInfo();
         if (userInfo["ID"] == username)
         {
             isExist = true;
             break;
         }
     }
+    Utility::deleteVectorPtrs(listOfAccounts);
     return isExist;
 }
 

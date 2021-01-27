@@ -6,7 +6,7 @@
 class Menu
 {
 private:
-    Controller _controller;
+    Controller *_controller;
 
 public:
     Menu();
